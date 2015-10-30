@@ -29,4 +29,6 @@ class PuzzleProgress(models.Model):
     puzzle      = models.ForeignKey(Puzzle)
     start_time  = models.DateTimeField()
     end_time    = models.DateTimeField(null = True, blank = True)
+    class Meta:
+        unique_together = (('team','puzzle'),)
 

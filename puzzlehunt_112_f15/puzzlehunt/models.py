@@ -4,6 +4,8 @@ from django.conf import settings
 
 class Team(models.Model):
     name        = models.CharField(max_length = 50)
+    def __str__(self):
+        return self.name
 
 class TeamMember(models.Model):
     user        = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True)
@@ -18,6 +20,8 @@ class Puzzle(models.Model):
     time_limit  = models.DurationField(help_text = 'in minutes')
     par_score   = models.IntegerField()
     image       = models.ImageField(upload_to = 'img')
+    def __str__(self):
+        return self.title
 
 class Hint(models.Model):
     puzzle      = models.ForeignKey(Puzzle)

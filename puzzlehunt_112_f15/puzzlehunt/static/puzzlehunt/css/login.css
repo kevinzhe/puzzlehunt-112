@@ -1,0 +1,32 @@
+.form-signin {
+    margin: 0 auto;
+    max-width: 300px;
+    padding: 15px;
+}
+
+.form-signin input {
+    position: relative;
+    height: auto;
+    font-size: 14px;
+    height: 40px;
+}
+
+.form-signin input:focus {
+    z-index: 2;
+}
+
+.form-signin input.username {
+    margin-top: 25px;
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input.password {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.form-signin button[id=submit] {
+    margin-top: 25px;
+}

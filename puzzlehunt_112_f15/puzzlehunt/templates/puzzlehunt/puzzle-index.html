@@ -1,0 +1,18 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Puzzles{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block body %}
+    <div class='container'>
+{% for puzzle in puzzles %}
+    {{ puzzle }}
+{% endfor %}
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

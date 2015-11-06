@@ -33,8 +33,12 @@ def puzzle(request, puzzle_id):
         'title':        puzzle.title,
         'subtitle':     puzzle.subtitle,
         'flavortext':   puzzle.flavortext,
+        'par_score':    puzzle.par_score,
         'start_time':   progress.start_time,
         'end_time':     progress.end_time,
+        'completed_in': progress.completed_in, 
+        'score':        progress.score,
+        'par_duration_human': puzzle.time_limit,
         'par_duration': int(puzzle.time_limit.total_seconds()),
         'hints':        hints,
     }

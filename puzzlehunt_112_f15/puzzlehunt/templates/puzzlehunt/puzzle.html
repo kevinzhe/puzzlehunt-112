@@ -22,13 +22,6 @@
         </div>
 
         <div class='row'>
-            <div class='col-sm-12'>
-                <div class='progress'>
-                    <div id='puzzle-progress' class='progress-bar' style='' data-starttime='{{ start_time|date:"U" }}' data-parlimit='{{ par_duration }}'></div>
-                </div>
-            </div>
-        </div>
-        <div class='row'>
 {% for hint in hints %}
             <div class='col-sm-4 hint' data-time-shown='{{ hint.time_to_show }}'>
                 <h4>Hint {{ forloop.counter }}</h4>
@@ -41,6 +34,42 @@
             </div>
 {% endfor %}
         </div>
+
+        <div class='row'>
+            <form>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class='row text-center'>
+            <div class='col-sm-4'>
+{% if end_time %}
+                <h4 class='info-header'>Completed in</h4>
+                <div id='completed-in' class='info-content'>{{ completed_in }}</div>
+{% else %}
+                <h4 class='info-header'>Elapsed</h4>
+                <div id='par-timer' class='info-content' data-start-time='{{ start_time|date:"U" }}' data-par-limit='{{ par_duration }}'></div>
+{% endif %}
+            </div>
+            <div class='col-sm-4'>
+                <h4 class='info-header'>Par score</h4>
+                <div id='par-score' class='info-content'>{{ par_score }} points</div>
+            </div>
+            <div class='col-sm-4'>
+                <h4 class='info-header'>Par time</h4>
+                <div id='par-time' class='info-content'>{{ par_duration_human }}</div>
+            </div>
+        </div>
+
+{% if score %}
+        <div class='row text-center'>
+            <div class='col-sm-12'>
+                <div id='score'>Points earned: {{ score }}</div>      
+            </div>
+        </div>
+{% endif %}
+
     </div>
 {% endblock %}
 

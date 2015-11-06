@@ -20,6 +20,7 @@ class Puzzle(models.Model):
     time_limit  = models.DurationField(help_text = 'in minutes')
     par_score   = models.IntegerField()
     image       = models.ImageField(upload_to = 'img')
+    order       = models.IntegerField()
     def __str__(self):
         return self.title
 
@@ -35,4 +36,5 @@ class PuzzleProgress(models.Model):
     end_time    = models.DateTimeField(null = True, blank = True)
     class Meta:
         unique_together = (('team','puzzle'),)
-
+    def __str__(self):
+        return 'Team {team} || Puzzle {puzzle}'.format(team=self.team, puzzle=self.puzzle)

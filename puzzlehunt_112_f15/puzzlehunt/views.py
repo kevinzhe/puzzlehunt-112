@@ -42,5 +42,6 @@ def puzzle(request, puzzle_id):
 
 @login_required
 def puzzle_index(request):
-    return render(request, 'puzzlehunt/puzzle-index.html', {'puzzles':Puzzle.objects.all()})
+    puzzles = Puzzle.objects.all().order_by('order')
+    return render(request, 'puzzlehunt/puzzle-index.html', {'puzzles':puzzles})
 

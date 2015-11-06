@@ -8,7 +8,12 @@
 {% block body %}
     <div class='container'>
 {% for puzzle in puzzles %}
-    {{ puzzle }}
+        <div class='row puzzle'>
+            <div class='col-sm-12'>
+                <a href='{% url "puzzle" puzzle.id %}'><h1>{{ puzzle.title }}</p></a>
+                <h4>{{ puzzle.subtitle }}</h4>
+            </div>
+        </div>
 {% endfor %}
     </div>
 {% endblock %}

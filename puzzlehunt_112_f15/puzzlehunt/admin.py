@@ -10,6 +10,7 @@ class PuzzleAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Meta',
             {'fields': [
+                'order',
                 'title',
                 'subtitle',
                 'authors',

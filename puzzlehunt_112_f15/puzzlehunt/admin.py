@@ -36,3 +36,5 @@ class TeamAdmin(admin.ModelAdmin):
     inlines = [TeamMemberInline]
 
 admin.site.register(Team, TeamAdmin)
+
+admin.site.register(PuzzleProgress)

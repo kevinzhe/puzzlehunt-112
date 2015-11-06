@@ -2,18 +2,24 @@
 {% block title %}Puzzles{% endblock %}
 
 {% block css %}
-
+    {% load staticfiles %}
+    <link rel='stylesheet' type='text/css' href='{% static "puzzlehunt/css/puzzle-index.css" %}'>
 {% endblock %}
 
 {% block body %}
-    <div class='container'>
+    <div class='container' id='puzzles'>
 {% for puzzle in puzzles %}
-        <div class='row puzzle'>
-            <div class='col-sm-12'>
-                <a href='{% url "puzzle" puzzle.id %}'><h1>{{ puzzle.title }}</p></a>
-                <h4>{{ puzzle.subtitle }}</h4>
+        <a href='{% url "puzzle" puzzle.id %}'>
+            <div class='row puzzle' style='background-image: url("{{ puzzle.image.url }}");'>
+                <div class='col-sm-8'>
+                    <h1 class='title'>{{ puzzle.title }}</h1>
+                    <h4 class='subtitle'>{{ puzzle.subtitle }}</h4>
+                </div>
+                <div class='col-sm-4'>
+                    <h5>{{ puzzle.time_limit }}</h5>
+                </div>
             </div>
-        </div>
+        </a>
 {% endfor %}
     </div>
 {% endblock %}

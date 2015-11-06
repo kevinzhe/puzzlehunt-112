@@ -1,0 +1,18 @@
+
+.puzzle {
+    border: 2px solid gray;
+    border-radius: 10px;
+    height: 200px;
+    margin-bottom: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
+    color: black;
+}
+
+.puzzle:hover {
+    background: #EEEEEE;
+}
+
+#puzzles a:hover {
+    text-decoration: none;
+}

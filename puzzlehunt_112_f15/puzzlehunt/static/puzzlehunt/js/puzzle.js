@@ -22,4 +22,10 @@ $(document).ready(function() {
     parTimer.timer({
         seconds: elapsed,
     });
+
+    $('.hint').each(function() {
+        var timeToShow = $(this).data('time-to-show');
+        var shownAfter = $(this).data('show-after');
+        var remaining = Math.max(timeToShow-now, 0);
+    });
 });

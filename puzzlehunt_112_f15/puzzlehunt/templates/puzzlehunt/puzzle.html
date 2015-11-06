@@ -1,16 +1,18 @@
 {% extends 'puzzlehunt/puzzlehunt.html' %}
 {% block title %}Puzzle {{ order }}: {{ title }}{% endblock %}
 
+
 {% block css %}
     {% load staticfiles %}
     <link rel='stylesheet' type='text/css' href='{% static "puzzlehunt/css/puzzle.css" %}'>
 {% endblock %}
 
+
 {% block body %}
     <div class='container'>
         <div class='row'>
             <div class='col-sm-12'>
-                <h1>{{ title }}<br>
+                <h1>Puzzle {{ order }}: {{ title }}<br>
                 <small>{{ subtitle }}</small></h1>
             </div>
         </div>
@@ -21,17 +23,24 @@
             </div>
         </div>
 
-        <div class='row'>
+        <div class='row text-center'>
 {% for hint in hints %}
-            <div class='col-sm-4 hint' data-time-shown='{{ hint.time_to_show }}'>
-                <h4>Hint {{ forloop.counter }}</h4>
-                <p>{{ hint.time_shown }}</p>
     {% if hint.can_show %}
-                <p>{{ hint.text }}</p>
-    {% else %}
-                <p>Locked</p>
-    {% endif %}
+            <div class='col-sm-4 hint' data-time-to-show='{{ hint.time_to_show }}' data-show-after='{{ hint.time_shown }}'>
+                <h4>Hint {{ forloop.counter }}</h4>
+                <p class='hint-text'>{{ hint.text }}</p>
+                <div class='hint-timer'></div>
             </div>
+    {% else %}
+            <div class='col-sm-4 hint inactive' data-time-to-show='{{ hint.time_to_show }}' data-show-after='{{ hint.time_shown }}'>
+                <h4>Hint {{ forloop.counter }}</h4>
+                <p class='hint-text'></p>
+                <div class='hint-timer'>
+                    Available at<br>
+                    {{ hint.time_shown }}
+                </div>
+            </div>
+    {% endif %}
 {% endfor %}
         </div>
 
@@ -72,6 +81,7 @@
 
     </div>
 {% endblock %}
+
 
 {% block js %}
     <script src='{% static "puzzlehunt/js/puzzle.js" %}'></script>

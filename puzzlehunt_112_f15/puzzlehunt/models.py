@@ -34,7 +34,20 @@ class PuzzleProgress(models.Model):
     puzzle      = models.ForeignKey(Puzzle)
     start_time  = models.DateTimeField()
     end_time    = models.DateTimeField(null = True, blank = True)
+
     class Meta:
         unique_together = (('team','puzzle'),)
+
+    @property
+    def completed_in(self):
+        if self.end_time is None: return None
+        return self.end_time - self.start_time
+
+    @property
+    def score(self):
+        if self.completed_in is None: return None
+        timediff = max(int((self.puzzle.time_limit - self.completed_in).total_seconds()) // 60, 0)
+        return self.puzzle.par_score + timediff
+
     def __str__(self):
         return 'Team {team} || Puzzle {puzzle}'.format(team=self.team, puzzle=self.puzzle)

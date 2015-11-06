@@ -29,11 +29,14 @@
         </div>
         <div class='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>
           <ul class='nav navbar-nav'>
-            <li class='active'><a href='#'>Link <span class='sr-only'>(current)</span></a></li>
-            <li><a href='#'>Link</a></li>
+            <li><a href='{% url "puzzle-index" %}'>Puzzles</a></li>
           </ul>
           <ul class='nav navbar-nav navbar-right'>
+{% if user %}
+            <li><a href='{% url "login" %}'>Log out</a></li>
+{% else %}
             <li><a href='{% url "login" %}'>Log in</a></li>
+{% endif %}
           </ul>
         </div>
       </div>

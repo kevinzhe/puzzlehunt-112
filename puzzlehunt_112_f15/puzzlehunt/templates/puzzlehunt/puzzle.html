@@ -1,0 +1,49 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Puzzle {{ order }}: {{ title }}{% endblock %}
+
+{% block css %}
+    {% load staticfiles %}
+    <link rel='stylesheet' type='text/css' href='{% static "puzzlehunt/css/puzzle.css" %}'>
+{% endblock %}
+
+{% block body %}
+    <div class='container'>
+        <div class='row'>
+            <div class='col-sm-12'>
+                <h1>{{ title }}<br>
+                <small>{{ subtitle }}</small></h1>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-sm-12'>
+                <p>{{ flavortext }}</p>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-sm-12'>
+                <div class='progress'>
+                    <div id='puzzle-progress' class='progress-bar' style='' data-starttime='{{ start_time|date:"U" }}' data-parlimit='{{ par_duration }}'></div>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+{% for hint in hints %}
+            <div class='col-sm-4 hint' data-time-shown='{{ hint.time_to_show }}'>
+                <h4>Hint {{ forloop.counter }}</h4>
+                <p>{{ hint.time_shown }}</p>
+    {% if hint.can_show %}
+                <p>{{ hint.text }}</p>
+    {% else %}
+                <p>Locked</p>
+    {% endif %}
+            </div>
+{% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src='{% static "puzzlehunt/js/puzzle.js" %}'></script>
+{% endblock %}

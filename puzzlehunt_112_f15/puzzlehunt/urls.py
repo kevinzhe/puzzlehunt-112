@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^p/$', views.puzzle_index, name='puzzle-index'),
     url(r'^p/(?P<puzzle_id>[0-9]+)/$', views.puzzle, name='puzzle'),
     url(r'^login$', auth_views.login, {'template_name':'login.html', 'extra_context':{'next':'/p'}}, name='login'),
+    url(r'^logout$', auth_views.logout, {'next_page': views.home}, name='logout'),
 ]

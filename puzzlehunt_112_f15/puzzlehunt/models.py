@@ -8,7 +8,7 @@ class Team(models.Model):
         return self.name
 
 class TeamMember(models.Model):
-    user        = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True)
+    user        = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, related_name="member")
     team        = models.ForeignKey(Team, related_name="members")
 
 class Puzzle(models.Model):

@@ -44,8 +44,15 @@
 {% endfor %}
         </div>
 
-        <div class='row'>
+        <div class='row solution-form'>
             <form>
+                <div class='input-group input-group-lg'>
+                    <label for='{{ form.solution.id_for_label }}' class='sr-only'>Solution</label>
+                    <input class='form-control solution-field' id='{{ form.solution.auto_id }}' name='{{ form.solution.html_name }}' type='text' placeholder='Solution' required>
+                    <span class='input-group-btn'>
+                        <button class='btn btn-default' id='submit' type='submit'><i class='fa fa-chevron-right'></i></button>
+                    </span>
+                </div>
             </form>
         </div>
 

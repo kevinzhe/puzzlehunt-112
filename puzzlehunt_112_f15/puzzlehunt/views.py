@@ -21,7 +21,7 @@ class PuzzleView(View):
         try: team = TeamMember.objects.get(user=request.user).team
         except TeamMember.DoesNotExist: return redirect(home)
         # Get the puzzle+hints
-        puzzle = get_object_or_404(Puzzle, pk=puzzle_id)
+        puzzle = get_object_or_404(Puzzle, order=puzzle_id)
         hints = Hint.objects.filter(puzzle=puzzle)
         # Get the progress
         try: progress = PuzzleProgress.objects.get(puzzle=puzzle, team=team)

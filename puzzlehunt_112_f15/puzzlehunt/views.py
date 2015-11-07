@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
-from puzzlehunt.models import Puzzle, PuzzleProgress, Hint, Team, TeamMember
+from puzzlehunt.models import *
 from django.views.generic import View
 from django import forms
 
@@ -86,12 +86,66 @@ class RegistrationView(View):
         user = User.objects.create_user(andrewID, email, pw1)
         user.first_name = name
         user.save()
-        authenticate(username=andrewID, password=pw1)
+        member = TeamMember(user=user)
+        member.save()
+        auth = authenticate(username=andrewID, password=pw1)
+        login(request, auth)
+        return HttpResponseRedirect("/")
+
+class JoinTeamView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        teams = Team.objects.all()
+        full_teams, unfull_teams = [], []
+        for team in teams:
+            num_members = len(team.members.all())
+            if num_members >= 4:
+                full_teams.append({"name": team.name, "id": team.id, "spots_left": 4-num_members})
+            else:
+                unfull_teams.append({"name": team.name, "id": team.id, "spots_left": 4-num_members})
+        has_team = bool(request.user.member.team)
+        context = {
+            "full_teams": full_teams,
+            "unfull_teams": unfull_teams,
+            "has_team": has_team
+        }
+        return render(request, 'puzzlehunt/join_team.html', context)
+
+class JoinTeamID(View):
+    @method_decorator(login_required)
+    def get(self, request, teamID):
+        teamID = int(teamID)
+        member = request.user.member
+
+        # already has a team
+        if (member.team): return HttpResponseRedirect("/")
+        # team doesnt exist
+        if (not Team.objects.filter(id=teamID)): return HttpResponseRedirect("/jointeam")
+        
+        team = Team.objects.get(id=teamID)
+        # team has 4 members already
+        if (len(team.members.all()) >= 4): return HttpResponseRedirect("/jointeam")
+
+        member.team = team
+        member.save()
         return HttpResponseRedirect("/")
 
 def home(request):
-    return render(request, 'puzzlehunt/home.html')
+    has_team = request.user.is_authenticated() and bool(request.user.member.team)
+    return render(request, 'puzzlehunt/home.html', {"has_team": has_team})
 
+class MakeTeamView(View):
+    @method_decorator(login_required)
+    def post(self, request):
+        team_name = request.POST.get("team_name")
+        if (not team_name): return HttpResponseRedirect("/jointeam")
+        member = request.user.member
+        if (member.team): return HttpResponseRedirect("/jointeam")
+        team = Team(name=team_name)
+        team.save()
+        member.team = team
+        member.save()
+        return HttpResponseRedirect("/")
 
 @login_required
 def puzzle_index(request):

@@ -9,7 +9,7 @@ class Team(models.Model):
 
 class TeamMember(models.Model):
     user        = models.OneToOneField(settings.AUTH_USER_MODEL, primary_key=True, related_name="member")
-    team        = models.ForeignKey(Team, related_name="members")
+    team        = models.ForeignKey(Team, related_name="members", blank=True, null=True)
 
 class Puzzle(models.Model):
     title       = models.CharField(max_length = 50)

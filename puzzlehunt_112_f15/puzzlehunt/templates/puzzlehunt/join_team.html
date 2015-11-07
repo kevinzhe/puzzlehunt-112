@@ -1,0 +1,41 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Join a Team!{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-xs-10 col-md-8 col-lg-6 col-xs-offset-1 col-md-offset-2 col-lg-offset-3">
+      <div class="text-center">
+        <h1>Join a Team</h1>
+      </div>
+      {% if not has_team %}
+        <h3>Make a Team</h3>
+        <form class="form-inline" method="POST" action="/maketeam">
+          {% csrf_token %}
+          <div class="form-group" style="width: 70%;">
+            <input style="width:100%;" class="form-control" type="text" name="team_name" placeholder="Enter your Team Name"/>
+          </div>
+          <button type="submit" class="btn btn-default">Create Team</button>
+        </form>
+      {% endif %}
+      <h3>Teams with Spots</h3>
+      <div class="team-list list-group">
+        {% for team in unfull_teams %}
+          <a href="/jointeamid/{{ team.id }}" class="list-group-item {% if has_team %}disabled{% endif %}">
+            {{ team.name }}
+            <span class="badge">{{ team.spots_left }} Spots Left</span>
+          </a>
+        {% endfor %}
+      </div>
+      <h3>Full Teams</h3>
+      <div class="team-list list-group">
+        {% for team in full_teams %}
+          <a href="#{{ team.id }}" class="list-group-item">{{ team.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}{% endblock %}

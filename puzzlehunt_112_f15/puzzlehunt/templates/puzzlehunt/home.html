@@ -7,7 +7,11 @@
             <h1>Puzzlehunt 112</h1>
             <h4>November 21, 2015, 6pm</h4>
             <hr/>
-            <button type='button' class='btn btn-primary btn-lg'>Register&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button>
+            {% if user.is_authenticated %}
+              <a href="/p"><button type='button' class='btn btn-primary btn-lg'>Join a Team&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
+            {% else %}
+              <a href="/register"><button type='button' class='btn btn-primary btn-lg'>Register&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

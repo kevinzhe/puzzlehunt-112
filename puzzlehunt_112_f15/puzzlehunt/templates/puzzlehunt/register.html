@@ -1,0 +1,40 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Form a Team!{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block body %}
+  <div class="row">
+    <div class="col-xs-10 col-md-8 col-lg-6 col-xs-offset-1 col-md-offset-2 col-lg-offset-3">
+      <div class="text-center">
+        <h1>Register to Join</h1>
+      </div>
+      <div class="text-center form-error-text">
+        <h3>{{error_msg}}</h3>
+      </div>
+      <form method="POST" action="/register">
+        {% csrf_token %}
+        <div class="form-group {% if not name %}has-error{% endif %}">
+          <label>You Name</label>
+          <input name="name" value="{{name}}" type="text" class="form-control" placeholder="Enter a name..">
+        </div>
+        <div class="form-group {% if not andrew %}has-error{% endif %}">
+          <label>Your AndrewID</label>
+          <input name="andrewID" value="{{andrew}}"type="text" class="form-control" placeholder="Enter a name..">
+        </div>
+        <div class="form-group {% if not pw1 %}has-error{% endif %}">
+          <label for="exampleInputPassword1">Pick a Password</label>
+          <input name="pw1" value="{{pw1}}" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        </div>
+        <div class="form-group {% if not pw2 %}has-error{% endif %}">
+          <label for="exampleInputPassword2">Repeat the Password</label>
+          <input name="pw2" value="{{pw2}}"type="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
+        </div>
+        
+        <button type="submit" class="btn btn-default center-button">Submit</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}{% endblock %}

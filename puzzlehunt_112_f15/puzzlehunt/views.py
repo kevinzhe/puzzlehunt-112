@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
-from .models import Puzzle, PuzzleProgress, Hint, Team, TeamMember
+from puzzlehunt.models import Puzzle, PuzzleProgress, Hint, Team, TeamMember
 from django.views.generic import View
 from django import forms
 
@@ -55,7 +58,36 @@ class PuzzleView(View):
         try: team = TeamMember.objects.get(user=request.user).team
         except TeamMember.DoesNotExist: return redirect(home)
 
+class RegistrationView(View):
+    def get(self, request):
+        return render(request, 'puzzlehunt/register.html')
 
+    def post(self, request):
+        name = request.POST.get("name", None)
+        andrewID = request.POST.get("andrewID", None)
+        pw1 = request.POST.get("pw1", None)
+        pw2 = request.POST.get("pw2", None)
+        error_msg = ""
+        if (not name): error_msg = "Enter a Name"
+        elif (not andrewID): error_msg = "Enter an AndrewID"
+        elif (not pw1): error_msg = "Enter a password"
+        elif (not pw2): error_msg = "Re-enter your password"
+        elif (pw1 != pw2): error_msg = "Passwords do not match"
+        if (error_msg):
+            return render(request, 'puzzlehunt/register.html',
+                {
+                    'error_msg': error_msg,
+                    'name': name,
+                    'andrew': andrewID,
+                    'pw1': pw1,
+                    'pw2': pw2
+                })
+        email = "%s@andrew.cmu.edu" % andrewID
+        user = User.objects.create_user(andrewID, email, pw1)
+        user.first_name = name
+        user.save()
+        authenticate(username=andrewID, password=pw1)
+        return HttpResponseRedirect("/")
 
 def home(request):
     return render(request, 'puzzlehunt/home.html')

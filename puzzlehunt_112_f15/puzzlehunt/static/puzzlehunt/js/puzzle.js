@@ -9,7 +9,7 @@ $(document).ready(function() {
 
     parTimer.timer({
         seconds: elapsed,
-        format: '%m:%s',
+        format: '%h:%m:%s',
     });
 
     $('.hint').each(function() {

@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^p/$',
         views.puzzle_index,
         name='puzzle-index'),
+    url(r'^p/start/',
+        views.StartPuzzleHuntView.as_view()),
     url(r'^p/(?P<puzzle_id>[0-9]+)/$',
         views.PuzzleView.as_view(),
         name='puzzle'),

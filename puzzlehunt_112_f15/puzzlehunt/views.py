@@ -13,6 +13,19 @@ from django import forms
 class PuzzleSolutionForm(forms.Form):
     solution = forms.CharField()
 
+class StartPuzzleHuntView(View):
+
+    @method_decorator(login_required)
+    def post(self, request):
+        code = request.POST.get("code")
+        if (code == "taco tuesdays"):
+            team = request.user.member.team
+            team.curr_puzzle += 1
+            team.save()
+            return HttpResponseRedirect("/p/")
+        else:
+            return HttpResponseRedirect("/p/")
+
 class PuzzleView(View):
 
     @method_decorator(login_required)
@@ -175,6 +188,13 @@ class TeamPageView(View):
 
 @login_required
 def puzzle_index(request):
+    try: team = TeamMember.objects.get(user=request.user).team
+    except TeamMember.DoesNotExist: return HttpResponseRedirect("/jointeam")
+    if (team.curr_puzzle == 0):
+        context = {}
+        context["teamID"] = team.id
+        return render(request, 'puzzlehunt/startpuzzlehunt.html', context)
+
     puzzles = Puzzle.objects.all().order_by('order')
     return render(request, 'puzzlehunt/puzzle-index.html', {'puzzles':puzzles})
 

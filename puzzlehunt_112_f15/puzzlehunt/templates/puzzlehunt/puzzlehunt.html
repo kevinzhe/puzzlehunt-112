@@ -33,7 +33,7 @@
           </ul>
           <ul class='nav navbar-nav navbar-right'>
             {% if user.is_authenticated %}
-              <li><a href='#'>{{user}}</a></li>
+              <li><a href='#'>{{user}}{% if user.member.team %} | Team {{ user.member.team }}{% endif %}</a></li>
               <li><a href='{% url "logout" %}'>Log out</a></li>
             {% else %}  
               <li><a href='{% url "register" %}'>Register</a></li>

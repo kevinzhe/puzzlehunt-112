@@ -1,0 +1,23 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Start PuzzleHunt{{ title }}{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">Enter the code to begin the Puzzlehunt!</div>
+          <div class="panel-body">
+            <form method="POST" action="/p/start/">
+              {% csrf_token %}
+              <div class="form-group">
+                <input class="form-control" placeholder="Super secret code goes here.." name="code" type="text">
+                <button style="margin-top:15px;" type="submit" class="btn btn-primary btn-lg btn-block">Begin!</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

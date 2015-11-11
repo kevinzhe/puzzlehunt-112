@@ -1,0 +1,41 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Team {{ team_name}}{{ title }}{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1 class="center-text">{{ team_name }}</h1>
+        <h3>Team Members</h3>
+        <div class="list-group">
+          {% for member in members %}
+            <div class="list-group-item">{{ member }}</div>
+          {% endfor %}
+        </div>
+        <h3>Puzzle Progress</h3>
+        {% if puzzle_started %}
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Puzzle Name</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for puzzle in puzzle_started %}
+                <tr>
+                  <td>{{ puzzle.name }}</td>
+                  <td>{{ puzzle.start_time }}</td>
+                  <td>{{ puzzle.end_time }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h2 class="center-text">No Puzzles Started Yet!</h2>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

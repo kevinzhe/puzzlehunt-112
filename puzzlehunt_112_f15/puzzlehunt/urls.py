@@ -21,6 +21,8 @@ urlpatterns = [
         views.JoinTeamView.as_view()),
     url(r'^maketeam',
         views.MakeTeamView.as_view()),
+    url(r'^teampage/(?P<team_id>[0-9]+)$',
+        views.TeamPageView.as_view()),
     url(r'^login$',
         auth_views.login,
         {'template_name':'login.html', 'extra_context':{'next':'/'}},

@@ -131,8 +131,11 @@ class JoinTeamID(View):
         return HttpResponseRedirect("/")
 
 def home(request):
-    has_team = request.user.is_authenticated() and bool(request.user.member.team)
-    return render(request, 'puzzlehunt/home.html', {"has_team": has_team})
+    context = {}
+    context["has_team"] = request.user.is_authenticated() and bool(request.user.member.team)
+    if (context["has_team"]):
+        context["team_id"] = request.user.member.team.id
+    return render(request, 'puzzlehunt/home.html', context)
 
 class MakeTeamView(View):
     @method_decorator(login_required)
@@ -146,6 +149,29 @@ class MakeTeamView(View):
         member.team = team
         member.save()
         return HttpResponseRedirect("/")
+
+class TeamPageView(View):
+    @method_decorator(login_required)
+    def get(self, request, team_id):
+        team_id = int(team_id)
+        team = Team.objects.get(id=team_id)
+        context = {}
+        context["team_name"] = team.name
+        context["members"] = []
+        for member in team.members.all():
+            context["members"].append(member.user.username)
+        context["puzzles_started"] = []
+        for puzzle in team.puzzles_started.all():
+            p_obj = {}
+            p_obj["name"] = puzzle.puzzle.title
+            p_obj["start_time"] = puzzle.start_time
+            if (puzzle.end_time):
+                p_obj["finished"] = True
+                p_obj["end_time"] = puzzle.end_time
+            else:
+                p_obj["finished"] = False
+            context["puzzles_started"].append(p_obj)
+        return render(request, 'puzzlehunt/teampage.html', context)
 
 @login_required
 def puzzle_index(request):

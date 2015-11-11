@@ -25,12 +25,12 @@ class Puzzle(models.Model):
         return self.title
 
 class Hint(models.Model):
-    puzzle      = models.ForeignKey(Puzzle)
+    puzzle      = models.ForeignKey(Puzzle, related_name="hints")
     text        = models.TextField()
     time_shown  = models.DurationField(help_text = 'in minutes')
 
 class PuzzleProgress(models.Model):
-    team        = models.ForeignKey(Team)
+    team        = models.ForeignKey(Team, related_name="puzzles_started")
     puzzle      = models.ForeignKey(Puzzle)
     start_time  = models.DateTimeField()
     end_time    = models.DateTimeField(null = True, blank = True)

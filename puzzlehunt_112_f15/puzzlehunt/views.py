@@ -2,16 +2,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, HttpResponseForbidden    
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from puzzlehunt.models import *
 from django.views.generic import View
 from django import forms
+import json
 
-
-class PuzzleSolutionForm(forms.Form):
-    solution = forms.CharField()
 
 class PuzzleView(View):
 
@@ -37,7 +35,6 @@ class PuzzleView(View):
             hint.time_to_show = int((progress.start_time+hint.time_shown).timestamp())
         # Render the view
         template_info = {
-            'form':         PuzzleSolutionForm(),
             'order':        puzzle.order,
             'title':        puzzle.title,
             'subtitle':     puzzle.subtitle,
@@ -52,11 +49,29 @@ class PuzzleView(View):
             'hints':        hints,
         }
         return render(request, 'puzzlehunt/puzzle.html', template_info)
+    
+    
 
     @method_decorator(login_required)
     def post(self, request, puzzle_id):
         try: team = TeamMember.objects.get(user=request.user).team
         except TeamMember.DoesNotExist: return redirect(home)
+
+class PuzzleHintView(View):
+    @method_decorator(login_required)
+    def get(self, request, puzzle_id, hint_id):
+        # Get the puzzle
+        try: puzzle = Puzzle.objects.get(order=puzzle_id)
+        except Puzzle.DoesNotExist: return HttpResponseNotFound(json.dumps({'error': 'Puzzle does not exist'}), content_type='application/json')
+        # Get the team's progress
+        try: progress = PuzzleProgress.objects.get(puzzle=puzzle, team=request.user.member.team)
+        except PuzzleProgress.DoesNotExist: return HttpResponseForbidden(json.dumps({'error': 'Team has not started puzzle yet'}), content_type='application/json')
+        # Get the hint
+        try: hint = Hint.objects.get(puzzle=puzzle, id=hint_id)
+        except Hint.DoesNotExist: return HttpResponseNotFound(json.dumps({'error': 'Hint for puzzle does not exist'}), content_type='application/json')
+        # Determine if it's time to show it yet
+        if (now() - progress.start_time) < hint.time_shown: return HttpResponseForbidden(json.dumps({'error': 'Team does not have access to hint yet'}), content_type='application/json')
+        return HttpResponse(json.dumps({'text':hint.text}), content_type='application/json')
 
 class RegistrationView(View):
     def get(self, request):

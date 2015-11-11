@@ -26,13 +26,13 @@
         <div class='row text-center'>
 {% for hint in hints %}
     {% if hint.can_show %}
-            <div class='col-sm-4 hint' data-time-to-show='{{ hint.time_to_show }}' data-show-after='{{ hint.time_shown }}'>
+            <div class='col-sm-4 hint' data-id='{{ hint.id }}' data-time-to-show='{{ hint.time_to_show }}' data-show-after='{{ hint.time_shown }}'>
                 <h4>Hint {{ forloop.counter }}</h4>
                 <p class='hint-text'>{{ hint.text }}</p>
                 <div class='hint-timer'></div>
             </div>
     {% else %}
-            <div class='col-sm-4 hint inactive' data-time-to-show='{{ hint.time_to_show }}' data-show-after='{{ hint.time_shown }}'>
+            <div class='col-sm-4 hint inactive' data-id='{{ hint.id }}' data-time-to-show='{{ hint.time_to_show }}' data-show-after='{{ hint.time_shown }}'>
                 <h4>Hint {{ forloop.counter }}</h4>
                 <p class='hint-text'></p>
                 <div class='hint-timer'>
@@ -47,8 +47,8 @@
         <div class='row solution-form'>
             <form>
                 <div class='input-group input-group-lg'>
-                    <label for='{{ form.solution.id_for_label }}' class='sr-only'>Solution</label>
-                    <input class='form-control solution-field' id='{{ form.solution.auto_id }}' name='{{ form.solution.html_name }}' type='text' placeholder='Solution' required>
+                    <label for='solution' class='sr-only'>Solution</label>
+                    <input class='form-control solution-field' id='solution' name='solution' type='text' placeholder='Solution' required>
                     <span class='input-group-btn'>
                         <button class='btn btn-default' id='submit' type='submit'><i class='fa fa-chevron-right'></i></button>
                     </span>

@@ -8,11 +8,13 @@
   <div class="row">
     <div class="col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4">
       <div class="text-center">
-        <h1>Register to Join</h1>
+        <h1>Register</h1>
       </div>
-      <div class="text-center">
-        <h3>{{error_msg}}</h3>
+      {% if error_msg %}
+      <div class="text-center alert alert-danger">
+        {{error_msg}}
       </div>
+      {% endif %}
       <form method="POST" action="/register">
         {% csrf_token %}
         <div class="form-group">

@@ -1,0 +1,42 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Scoreboard{% endblock %}
+
+{% block css %}
+    {% load staticfiles %}
+    <link rel='stylesheet' type='text/css' href='{% static "puzzlehunt/css/scoreboard.css" %}'>
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <h1 class="center-text">Scoreboard</h1>
+        <hr>
+        <table class="table text-center">
+          <thead>
+            <tr>
+              <th class='text-center'>#</th>
+              <th class='text-center'>Team</th>
+              <th class='text-center'>Completed</th>
+              <th class='text-center'>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for team in teams %}
+              <tr>
+                <td class='rank'></td>
+                <td>{{ team.name }}</td>
+                <td>{{ team.puzzles_completed }}</td>
+                <td>{{ team.score }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+    <script src='{% static "puzzlehunt/js/scoreboard.js" %}'></script>
+{% endblock %}

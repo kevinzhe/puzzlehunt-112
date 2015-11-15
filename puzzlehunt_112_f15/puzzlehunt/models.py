@@ -5,6 +5,7 @@ from django.conf import settings
 class Team(models.Model):
     name        = models.CharField(max_length = 50)
     curr_puzzle = models.IntegerField(default = 0)
+
     @property
     def score(self):
         score = 0
@@ -13,6 +14,11 @@ class Team(models.Model):
             if puzzle_score is not None:
                 score += puzzle_score
         return score
+
+    @property
+    def puzzles_completed(self):
+        return len(PuzzleProgress.objects.filter(team=self))
+
     def __str__(self):
         return self.name
 

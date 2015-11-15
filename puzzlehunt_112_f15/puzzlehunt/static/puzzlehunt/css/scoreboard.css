@@ -1,0 +1,9 @@
+table {
+    font-size: 24px;
+    counter-reset: item;
+}
+
+table .rank:before {
+    content: counter(item);
+    counter-increment: item;
+}

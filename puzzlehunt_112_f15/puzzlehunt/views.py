@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -56,7 +57,7 @@ class PuzzleView(View):
             'solution':     puzzle.solution,
             'start_time':   progress.start_time,
             'end_time':     progress.end_time,
-            'completed_in': progress.completed_in, 
+            'completed_in': str(progress.completed_in).split('.',2)[0],
             'score':        progress.score,
             'par_duration_human': puzzle.time_limit,
             'par_duration': int(puzzle.time_limit.total_seconds()),
@@ -93,7 +94,7 @@ class PuzzleView(View):
             progress.save()
             team.curr_puzzle += 1
             team.save()
-            response['completed_in'] = progress.completed_in
+            response['completed_in'] = str(progress.completed_in).split('.',2)[0]
             response['solution'] = puzzle.solution
             response['score'] = progress.score
         return HttpResponse(json.dumps(response), content_type='application/json')
@@ -124,11 +125,16 @@ class RegistrationView(View):
         pw1 = request.POST.get("pw1", None)
         pw2 = request.POST.get("pw2", None)
         error_msg = ""
-        if (not name): error_msg = "Enter a Name"
-        elif (not andrewID): error_msg = "Enter an AndrewID"
-        elif (not pw1): error_msg = "Enter a password"
-        elif (not pw2): error_msg = "Re-enter your password"
+        if (not name or type(name) is not str): error_msg = "Enter a Name"
+        elif (not andrewID or type(andrewID) is not str): error_msg = "Enter an AndrewID"
+        elif (not pw1 or type(pw1) is not str): error_msg = "Enter a password"
+        elif (not pw2 or type(pw2) is not str): error_msg = "Re-enter your password"
         elif (pw1 != pw2): error_msg = "Passwords do not match"
+        try:
+            User.objects.get(username=andrewID)
+            error_msg = "AndrewID already registered"
+        except User.DoesNotExist:
+            pass
         if (error_msg):
             return render(request, 'puzzlehunt/register.html',
                 {
@@ -208,25 +214,21 @@ class MakeTeamView(View):
 
 class TeamPageView(View):
     @method_decorator(login_required)
-    def get(self, request, team_id):
-        team_id = int(team_id)
-        team = Team.objects.get(id=team_id)
+    def get(self, request):
+        team = request.user.member.team
         context = {}
-        context["team_name"] = team.name
-        context["members"] = []
-        for member in team.members.all():
-            context["members"].append(member.user.username)
-        context["puzzles_started"] = []
-        for puzzle in team.puzzles_started.all():
-            p_obj = {}
-            p_obj["name"] = puzzle.puzzle.title
-            p_obj["start_time"] = puzzle.start_time
-            if (puzzle.end_time):
-                p_obj["finished"] = True
-                p_obj["end_time"] = puzzle.end_time
-            else:
-                p_obj["finished"] = False
-            context["puzzles_started"].append(p_obj)
+        context["team"] = team
+        context["members"] = team.members.all() 
+        context['progress'] = []
+        for prog in PuzzleProgress.objects.filter(team=team):
+            context["progress"].append({
+                'puzzle': prog.puzzle,
+                'completed_in': str(prog.completed_in).split('.',2)[0],
+                'score': prog.score
+            })
+        context['puzzles_completed'] = team.puzzles_completed
+        context['total_puzzles'] = Puzzle.objects.count()
+        context['percent_complete'] = context['puzzles_completed']/context['total_puzzles']*100
         return render(request, 'puzzlehunt/teampage.html', context)
 
 @login_required
@@ -242,10 +244,29 @@ def puzzle_index(request):
     puzzles = Puzzle.objects.all().order_by('order')
     progress = PuzzleProgress.objects.filter(team=team)
     for puzzle in puzzles:
-        puzzle.score = progress.get(puzzle=puzzle).score
+        try: puzzle.score = progress.get(puzzle=puzzle).score
+        except PuzzleProgress.DoesNotExist: pass
     context = {
         'puzzles': puzzles,
         'team': team
     }
     return render(request, 'puzzlehunt/puzzle-index.html', context)
+
+class ScoreboardView(View):
+    @method_decorator(login_required)
+    @method_decorator(staff_member_required)
+    def get(self, request):
+        teams = [] 
+        for team in Team.objects.all():
+            if team.puzzles_completed > 0:
+                teams.append({
+                    'score': team.score,
+                    'puzzles_completed': team.puzzles_completed,
+                    'name': team.name
+                })
+        teams.sort(key=lambda t: t['score'], reverse=True)
+        context = {
+            'teams': teams
+        }
+        return render(request, 'puzzlehunt/scoreboard.html', context)
 

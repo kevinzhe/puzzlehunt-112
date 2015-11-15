@@ -5,7 +5,14 @@ from django.conf import settings
 class Team(models.Model):
     name        = models.CharField(max_length = 50)
     curr_puzzle = models.IntegerField(default = 0)
-
+    @property
+    def score(self):
+        score = 0
+        for puzzle in PuzzleProgress.objects.filter(team=self):
+            puzzle_score = puzzle.score
+            if puzzle_score is not None:
+                score += puzzle_score
+        return score
     def __str__(self):
         return self.name
 
@@ -18,7 +25,7 @@ class Puzzle(models.Model):
     subtitle    = models.CharField(max_length = 100)
     authors     = models.CharField(max_length = 200)
     flavortext  = models.TextField()
-    solution    = models.TextField(help_text = 'as a Python dictionary')
+    solution    = models.TextField()
     time_limit  = models.DurationField(help_text = 'in minutes')
     par_score   = models.IntegerField()
     image       = models.ImageField(upload_to = 'img')

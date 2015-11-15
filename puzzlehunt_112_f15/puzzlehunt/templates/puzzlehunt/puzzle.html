@@ -43,9 +43,12 @@
     {% endif %}
 {% endfor %}
         </div>
+        <hr>
 
+{% if not end_time %}
         <div class='row solution-form'>
-            <form>
+            <form id='solution-form'>
+                {% csrf_token %}
                 <div class='input-group input-group-lg'>
                     <label for='solution' class='sr-only'>Solution</label>
                     <input class='form-control solution-field' id='solution' name='solution' type='text' placeholder='Solution' required>
@@ -55,7 +58,27 @@
                 </div>
             </form>
         </div>
-
+{% endif %}
+        <div class='row text-center finished-info {% if not end_time %}hidden{% endif %}'>
+            <div class='col-sm-6'>
+                <h3 class='real-solution'>
+                    <small>Solution</small>
+                    <br>
+{% if end_time %}
+                    {{ solution }}
+{% endif %}
+                </h3>
+            </div>
+            <div class='col-sm-6'>
+                <h3 class='real-score'>
+                    <small>Score</small>
+                    <br>
+{% if end_time %}
+                    {{ score }}
+{% endif %}
+                </h3>
+            </div>
+        </div>
         <hr>
 
         <div class='row text-center'>

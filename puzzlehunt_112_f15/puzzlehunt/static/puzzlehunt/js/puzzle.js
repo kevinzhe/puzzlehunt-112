@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    /* Set up the timers and the hint AJAX-ing */
     var parTimer = $('#par-timer');
 
     var startTime = parTimer.data('start-time');
@@ -19,7 +20,6 @@ $(document).ready(function() {
         var remaining = Math.max(timeToShow-now, 0);
         var puzzle_id = location.pathname.split('/')[2];
         var hint_id = $(this).data('id');
-        console.log(hint_id);
         if (remaining > 0) {
             window.setTimeout(function() {
                 $.ajax({
@@ -33,6 +33,37 @@ $(document).ready(function() {
                 });
             }, remaining*1000+500);
         }
+    });
+
+
+    /* Set up the solution AJAX-ing */
+    $('#solution-form').on('submit', function(event) {
+        event.preventDefault();
+        var puzzle_id = location.pathname.split('/')[2];
+        var form = $(this);
+        $.ajax({
+            url: '/p/'+puzzle_id+'/',
+            type: 'POST',
+            dataType: 'json',
+            data: form.serialize()
+        }).done(function(data) {
+            console.log(data);
+            if (typeof data.error !== 'undefined') {
+                return;
+            }
+            if (data.correct) {
+                var $sol = $('.real-solution');
+                $sol.append(data.solution);
+                var $score = $('.real-score');
+                $score.append(data.score);
+                $('.solution-form').remove();
+                $('.finished-info').removeClass('hidden');
+            } else {
+                console.log('incorrect!');
+            }
+        });
+        /* Return false to prevent default HTML submit */
+        return false;
     });
 
 });

@@ -53,6 +53,7 @@ class PuzzleView(View):
             'subtitle':     puzzle.subtitle,
             'flavortext':   puzzle.flavortext,
             'par_score':    puzzle.par_score,
+            'solution':     puzzle.solution,
             'start_time':   progress.start_time,
             'end_time':     progress.end_time,
             'completed_in': progress.completed_in, 
@@ -62,13 +63,40 @@ class PuzzleView(View):
             'hints':        hints,
         }
         return render(request, 'puzzlehunt/puzzle.html', template_info)
-    
-    
 
     @method_decorator(login_required)
     def post(self, request, puzzle_id):
-        try: team = TeamMember.objects.get(user=request.user).team
-        except TeamMember.DoesNotExist: return redirect(home)
+        # get and validate the team
+        team = request.user.member.team
+        if team is None:
+            return HttpResponseForbidden(json.dumps({'error': 'No team in request'}), content_type='application/json')
+        try: puzzle_id = int(puzzle_id)
+        except: return HttpResponse(json.dumps({'error': 'Invalid puzzle id'}), content_type='application/json')
+        if team.curr_puzzle < puzzle_id:
+            return HttpResponseForbidden(json.dumps({'error': 'Team hasn\'t reached this puzzle yet'}), content_type='application/json')
+        # validate the solution
+        user_soln = request.POST.get('solution', None)
+        if user_soln is None:
+            return HttpResponse(json.dumps({'error': 'solution field does not exist'}), content_type='application/json')
+        if type(user_soln) is not str:
+            return HttpResponse(json.dumps({'error': 'solution is not a string'}), content_type='application/json')
+        # check correctness
+        try: puzzle = Puzzle.objects.get(order = puzzle_id)
+        except Puzzle.DoesNotExist: return HttpResponse(json.dumps({'error': 'Puzzle does not exist'}), content_type='application/json')
+        correct = user_soln == puzzle.solution
+        response = {
+            'correct': correct,
+        }
+        progress = PuzzleProgress.objects.get(team=team, puzzle=puzzle)
+        if correct and progress.end_time is None:
+            progress.end_time = now()
+            progress.save()
+            team.curr_puzzle += 1
+            team.save()
+            response['completed_in'] = progress.completed_in
+            response['solution'] = puzzle.solution
+            response['score'] = progress.score
+        return HttpResponse(json.dumps(response), content_type='application/json')
 
 class PuzzleHintView(View):
     @method_decorator(login_required)
@@ -203,13 +231,21 @@ class TeamPageView(View):
 
 @login_required
 def puzzle_index(request):
-    try: team = TeamMember.objects.get(user=request.user).team
-    except TeamMember.DoesNotExist: return HttpResponseRedirect("/jointeam")
+    team = request.user.member.team
+    if team is None:
+        return HttpResponseRedirect("/jointeam")
     if (team.curr_puzzle == 0):
         context = {}
         context["teamID"] = team.id
         return render(request, 'puzzlehunt/startpuzzlehunt.html', context)
 
     puzzles = Puzzle.objects.all().order_by('order')
-    return render(request, 'puzzlehunt/puzzle-index.html', {'puzzles':puzzles})
+    progress = PuzzleProgress.objects.filter(team=team)
+    for puzzle in puzzles:
+        puzzle.score = progress.get(puzzle=puzzle).score
+    context = {
+        'puzzles': puzzles,
+        'team': team
+    }
+    return render(request, 'puzzlehunt/puzzle-index.html', context)
 

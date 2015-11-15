@@ -7,8 +7,45 @@
 {% endblock %}
 
 {% block body %}
+    <div class='container team-score'>
+        <div class='row'>
+            <div class='col-xs-12 text-center'>
+                <h1>
+                    <small>Team {{ team.name }}</small><br>
+                    {{ team.score }} <small>pts</small>
+                </h1>
+            </div>
+        </div>
+    </div>
     <div class='container' id='puzzles'>
 {% for puzzle in puzzles %}
+        <div class='col-sm-8 col-sm-offset-2'>
+            <a href='{% url "puzzle" puzzle.order %}'>
+                <div class='row puzzle {% if puzzle.score != None %}puzzle-complete{% endif %}'>
+                    <div class='col-sm-8'>
+                        <h1 class='title'>{{ puzzle.title }}</h1>
+                        <h4 class='subtitle'>{{ puzzle.subtitle }}</h4>
+                    </div>
+                    <div class='col-sm-4 score text-center'>
+                        <h1>
+        {% if puzzle.score != None %}
+                            {{ puzzle.score }}
+        {% else %}
+                            --
+        {% endif %}
+                        </h1>
+                        <h4>
+                            Score
+                        </h4>
+                        <p>
+                            Par {{ puzzle.par_score }}
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+
+<!--
         <a href='{% url "puzzle" puzzle.id %}'>
             <div class='row puzzle' style='background-image: url("{{ puzzle.image.url }}");'>
                 <div class='col-sm-8'>
@@ -20,6 +57,8 @@
                 </div>
             </div>
         </a>
+-->
+        </div>
 {% endfor %}
     </div>
 {% endblock %}

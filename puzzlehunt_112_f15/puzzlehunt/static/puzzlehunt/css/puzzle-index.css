@@ -1,16 +1,40 @@
+.team-score {
+    padding-bottom: 30px;
+}
 
 .puzzle {
-    border: 2px solid gray;
+    background-color: #F4F4F4;
     border-radius: 10px;
-    height: 200px;
-    margin-bottom: 40px;
-    margin-left: 10px;
-    margin-right: 10px;
-    color: black;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    color: #444444;
 }
 
 .puzzle:hover {
-    background: #EEEEEE;
+    background-color: #F0F0F0;
+}
+
+.puzzle-complete {
+    background-color: #D8F6CE; 
+}
+
+.puzzle-complete:hover {
+    background-color: #CEF6CE;
+}
+
+.puzzle .title {
+    font-weight: 200;
+    font-size: 48px;
+    padding-bottom: 10px;
+}
+
+.puzzle .score {
+    color: #999999;
+    text-align: right;
 }
 
 #puzzles a:hover {

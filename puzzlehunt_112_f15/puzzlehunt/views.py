@@ -18,7 +18,7 @@ class StartPuzzleHuntView(View):
         code = request.POST.get("code")
         if (code == "taco tuesdays"):
             team = request.user.member.team
-            team.curr_puzzle += 1
+            team.curr_puzzle = 1
             team.save()
             return HttpResponseRedirect("/p/")
         else:

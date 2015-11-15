@@ -45,21 +45,24 @@ $(document).ready(function() {
             url: '/p/'+puzzle_id+'/',
             type: 'POST',
             dataType: 'json',
-            data: form.serialize()
+            data: form.serialize(),
+            beforeSend: function() {
+                $('#submit').prop('disabled', true);
+                $('#solution').prop('disabled', true);
+            }
         }).done(function(data) {
-            console.log(data);
+            $('#submit').prop('disabled', false);
+            $('#solution').prop('disabled', false);
             if (typeof data.error !== 'undefined') {
                 return;
             }
             if (data.correct) {
-                var $sol = $('.real-solution');
-                $sol.append(data.solution);
-                var $score = $('.real-score');
-                $score.append(data.score);
+                $('.real-solution').append(data.solution);
+                $('.real-score').append(data.score);
                 $('.solution-form').remove();
                 $('.finished-info').removeClass('hidden');
             } else {
-                console.log('incorrect!');
+                form.addClass('has-error');
             }
         });
         /* Return false to prevent default HTML submit */

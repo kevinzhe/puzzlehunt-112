@@ -20,7 +20,9 @@
     <div class='container' id='puzzles'>
 {% for puzzle in puzzles %}
         <div class='col-sm-8 col-sm-offset-2'>
+        {% if puzzle.score or puzzle.score == None %}
             <a href='{% url "puzzle" puzzle.order %}'>
+        {% endif %}
                 <div class='row puzzle {% if puzzle.score != None %}puzzle-complete{% endif %}'>
                     <div class='col-sm-8'>
                         <h1 class='title'>{{ puzzle.title }}</h1>
@@ -42,7 +44,9 @@
                         </p>
                     </div>
                 </div>
+        {% if puzzle.score %}
             </a>
+        {% endif %}
         </div>
 {% endfor %}
     </div>

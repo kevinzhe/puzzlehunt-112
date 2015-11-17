@@ -35,6 +35,8 @@ class PuzzleView(View):
         # Get the puzzle+hints
         puzzle = get_object_or_404(Puzzle, order=puzzle_id)
         hints = Hint.objects.filter(puzzle=puzzle)
+        if team.curr_puzzle < puzzle.order:
+            return HttpResponseRedirect('/p')
         # Get the progress
         try: progress = PuzzleProgress.objects.get(puzzle=puzzle, team=team)
         except PuzzleProgress.DoesNotExist:
@@ -161,21 +163,38 @@ class JoinTeamView(View):
         full_teams, unfull_teams = [], []
         for team in teams:
             num_members = len(team.members.all())
+            t_obj = {
+                "name": team.name,
+                "id": team.id,
+                "spots_left": 4-num_members,
+                "has_passcode": team.passcode is not None
+            }
             if num_members >= 4:
-                full_teams.append({"name": team.name, "id": team.id, "spots_left": 4-num_members})
+                full_teams.append(t_obj)
             else:
-                unfull_teams.append({"name": team.name, "id": team.id, "spots_left": 4-num_members})
+                unfull_teams.append(t_obj)
         has_team = bool(request.user.member.team)
+        has_error = bool(request.GET.get('error'))
         context = {
             "full_teams": full_teams,
             "unfull_teams": unfull_teams,
-            "has_team": has_team
+            "has_team": has_team,
+            "has_error": has_error
         }
         return render(request, 'puzzlehunt/join_team.html', context)
 
 class JoinTeamID(View):
     @method_decorator(login_required)
-    def get(self, request, teamID):
+    def get(self, request, teamID, error=None):
+        return self.addTeamMember(request, teamID, error=error)
+
+    def post(self, request, teamID):
+        passcode = request.POST.get('passcode')
+        return self.addTeamMember(request, teamID, passcode)
+
+    def addTeamMember(self, request, teamID, passcode=None, error=None):
+        if not teamID.isdigit():
+            return HttpResponseRedirect("/jointeam")
         teamID = int(teamID)
         member = request.user.member
 
@@ -187,6 +206,14 @@ class JoinTeamID(View):
         team = Team.objects.get(id=teamID)
         # team has 4 members already
         if (len(team.members.all()) >= 4): return HttpResponseRedirect("/jointeam")
+
+        if team.passcode is not None:
+            context = { "team": team, } 
+            if passcode is None:
+                return render(request, 'puzzlehunt/team_passcode.html', context)
+            if passcode != team.passcode:
+                context['error'] = "Incorrect passcode"
+                return render(request, 'puzzlehunt/team_passcode.html', context)
 
         member.team = team
         member.save()
@@ -202,11 +229,13 @@ def home(request):
 class MakeTeamView(View):
     @method_decorator(login_required)
     def post(self, request):
-        team_name = request.POST.get("team_name")
-        if (not team_name): return HttpResponseRedirect("/jointeam")
         member = request.user.member
         if (member.team): return HttpResponseRedirect("/jointeam")
-        team = Team(name=team_name)
+        team_name = request.POST.get("team_name")
+        if (not team_name): return HttpResponseRedirect("/jointeam")
+        if Team.objects.filter(name=team_name): return HttpResponseRedirect("/jointeam?error=true")
+        passcode = request.POST.get("passcode")
+        team = Team(name=team_name, passcode=passcode)
         team.save()
         member.team = team
         member.save()
@@ -216,6 +245,8 @@ class TeamPageView(View):
     @method_decorator(login_required)
     def get(self, request):
         team = request.user.member.team
+        if team is None:
+            return HttpResponseRedirect("/jointeam")
         context = {}
         context["team"] = team
         context["members"] = team.members.all() 

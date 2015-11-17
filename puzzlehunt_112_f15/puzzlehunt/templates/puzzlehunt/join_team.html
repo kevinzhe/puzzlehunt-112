@@ -11,12 +11,18 @@
       </div>
       {% if not has_team %}
         <h3>Make a Team</h3>
+        {% if has_error %}<span class='bg-danger'>Team already exists</span>{% endif %}
         <form class="form-inline" method="POST" action="/maketeam">
           {% csrf_token %}
-          <div class="form-group" style="width: 70%;">
-            <input style="width:100%;" class="form-control" type="text" name="team_name" placeholder="Enter your Team Name"/>
+          <div class="form-group">
+            <input class="form-control" type="text" name="team_name" placeholder="Team Name">
           </div>
-          <button type="submit" class="btn btn-default">Create Team</button>
+          <div class="form-group">
+            <input class="form-control" type="text" name="passcode" placeholder="Passcode (optional)">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-default">Create Team&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button>
+          </div>
         </form>
       {% endif %}
       <h3>Teams with Spots</h3>
@@ -24,14 +30,14 @@
         {% for team in unfull_teams %}
           <a href="/jointeamid/{{ team.id }}" class="list-group-item {% if has_team %}disabled{% endif %}">
             {{ team.name }}
-            <span class="badge">{{ team.spots_left }} Spots Left</span>
+            <span class="badge">{{ team.spots_left }} Spot{% if team.spots_left > 1 %}s{% endif %} Left{% if team.has_passcode %}&nbsp;&nbsp;&middot;&nbsp;&nbsp;<i class='fa fa-lock'></i>{% endif %}</span>
           </a>
         {% endfor %}
       </div>
       <h3>Full Teams</h3>
       <div class="team-list list-group">
         {% for team in full_teams %}
-          <a href="#{{ team.id }}" class="list-group-item">{{ team.name }}</a>
+          <a href="#{{ team.id }}" class="list-group-item disabled">{{ team.name }}</a>
         {% endfor %}
       </div>
     </div>

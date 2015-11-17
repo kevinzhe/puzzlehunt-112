@@ -1,0 +1,27 @@
+{% extends 'puzzlehunt/puzzlehunt.html' %}
+{% block title %}Join team {{ team.name }}{% endblock %}
+
+{% block css %}{% endblock %}
+
+{% block body %}
+    <div class='container'>
+        <div class='text-center'>
+            <div style='margin: 0 auto; max-width: 500px'>
+                <h1>Join team {{ team.name }}</h1><br>
+                <form class method='POST' action='/jointeamid/{{ team.id }}'>
+                    {% csrf_token %}
+                    <div class='form-group'>
+                        <input class='form-control' type='text' name='passcode' placeholder='Passcode'>
+                    </div>
+                    <button type='submit' class='btn btn-default'>Join</button>
+                </form>
+            </div>
+            <hr>
+            {% if error %}
+            <div style='display:inline-block' class='alert alert-danger'>{{ error }}</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}{% endblock %}

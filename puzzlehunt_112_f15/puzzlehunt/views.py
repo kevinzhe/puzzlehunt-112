@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, HttpResponseForbidden    
 from django.utils.decorators import method_decorator
@@ -137,6 +137,10 @@ class RegistrationView(View):
             error_msg = "AndrewID already registered"
         except User.DoesNotExist:
             pass
+        try:
+            role = ValidUser.objects.get(andrew_id=andrewID).role
+        except ValidUser.DoesNotExist:
+            error_msg = "Invalid AndrewID"
         if (error_msg):
             return render(request, 'puzzlehunt/register.html',
                 {
@@ -149,6 +153,15 @@ class RegistrationView(View):
         email = "%s@andrew.cmu.edu" % andrewID
         user = User.objects.create_user(andrewID, email, pw1)
         user.first_name = name
+        user.save()
+        if role == ValidUser.ROLE_AUTHOR:
+            user.is_staff = True
+            user.user_permissions.add(Permission.objects.get(codename='add_puzzle'))
+            user.user_permissions.add(Permission.objects.get(codename='change_puzzle'))
+            user.user_permissions.add(Permission.objects.get(codename='delete_puzzle'))
+            user.user_permissions.add(Permission.objects.get(codename='add_hint'))
+            user.user_permissions.add(Permission.objects.get(codename='change_hint'))
+            user.user_permissions.add(Permission.objects.get(codename='delete_hint'))
         user.save()
         member = TeamMember(user=user)
         member.save()

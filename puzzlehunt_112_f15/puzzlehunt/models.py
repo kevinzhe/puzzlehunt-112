@@ -67,3 +67,13 @@ class PuzzleProgress(models.Model):
 
     def __str__(self):
         return 'Team {team} || Puzzle {puzzle}'.format(team=self.team, puzzle=self.puzzle)
+
+class ValidUser(models.Model):
+    ROLE_STUDENT    = 'student'
+    ROLE_AUTHOR     = 'author'
+    ROLE__CHOICES   = (
+        (ROLE_STUDENT, 'Student'),
+        (ROLE_AUTHOR,  'Author'),
+    )
+    andrew_id   = models.CharField(max_length = 50)
+    role        = models.CharField(max_length = 50, choices = ROLE__CHOICES, default = ROLE_STUDENT)

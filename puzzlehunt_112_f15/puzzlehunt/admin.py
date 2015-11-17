@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Team, TeamMember, Puzzle, Hint, PuzzleProgress
+from .models import Team, TeamMember, Puzzle, Hint, PuzzleProgress, ValidUser
 
 
 class HintInline(admin.StackedInline):
@@ -39,3 +39,5 @@ class TeamAdmin(admin.ModelAdmin):
 admin.site.register(Team, TeamAdmin)
 
 admin.site.register(PuzzleProgress)
+
+admin.site.register(ValidUser)

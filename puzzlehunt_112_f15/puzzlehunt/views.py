@@ -251,6 +251,8 @@ class MakeTeamView(View):
         if (not team_name): return HttpResponseRedirect("/jointeam")
         if Team.objects.filter(name=team_name): return HttpResponseRedirect("/jointeam?error=true")
         passcode = request.POST.get("passcode")
+        if passcode == '':
+            passcode = None
         team = Team(name=team_name, passcode=passcode)
         team.save()
         member.team = team
@@ -275,7 +277,10 @@ class TeamPageView(View):
             })
         context['puzzles_completed'] = team.puzzles_completed
         context['total_puzzles'] = Puzzle.objects.count()
-        context['percent_complete'] = context['puzzles_completed']/context['total_puzzles']*100
+        if context['total_puzzles'] > 0:
+            context['percent_complete'] = context['puzzles_completed']/context['total_puzzles']*100
+        else:
+            context['percent_complete'] = 0
         return render(request, 'puzzlehunt/teampage.html', context)
 
 @login_required

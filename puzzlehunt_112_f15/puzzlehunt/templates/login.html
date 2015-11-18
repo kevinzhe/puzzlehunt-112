@@ -15,7 +15,7 @@
                 <h2>Sign in</h2>
                 <div class='form-group'>
                     <label for='{{ form.username.id_for_label }}' class='sr-only'>Username</label>
-                    <input type='text' class='form-control username' id='{{ form.username.auto_id }}' name='{{ form.username.html_name }}' value='{{ form.username.value|default:"" }}' placeholder='Username' required autofocus>
+                    <input type='text' class='form-control username' id='{{ form.username.auto_id }}' name='{{ form.username.html_name }}' value='{{ form.username.value|default:"" }}' placeholder='Username' required autofocus autocapitalize='off' autocorrect='off' autocomplete='off'>
                     <label for='{{ form.password.id_for_label }}' class='sr-only'>Password</label>
                     <input type='password' class='form-control password' id='{{ form.password.auto_id }}'  name='{{ form.password.html_name}}' placeholder='Password' required>
                     <input type='hidden' name='next' value='{{ next }}'>

@@ -33,7 +33,7 @@ class Puzzle(models.Model):
     authors     = models.CharField(max_length = 200)
     flavortext  = models.TextField()
     solution    = models.TextField()
-    time_limit  = models.DurationField(help_text = 'in minutes')
+    time_limit  = models.DurationField(help_text = 'hh:mm:ss')
     par_score   = models.IntegerField()
     order       = models.IntegerField()
     def __str__(self):
@@ -48,7 +48,7 @@ class PuzzleMedia(models.Model):
 class Hint(models.Model):
     puzzle      = models.ForeignKey(Puzzle, related_name="hints")
     text        = models.TextField()
-    time_shown  = models.DurationField(help_text = 'in minutes')
+    time_shown  = models.DurationField(help_text = 'hh:mm:ss')
 
 class PuzzleProgress(models.Model):
     team        = models.ForeignKey(Team, related_name="puzzles_started")

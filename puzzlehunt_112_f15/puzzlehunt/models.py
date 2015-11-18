@@ -82,3 +82,5 @@ class ValidUser(models.Model):
     )
     andrew_id   = models.CharField(max_length = 50)
     role        = models.CharField(max_length = 50, choices = ROLE__CHOICES, default = ROLE_STUDENT)
+    def __str__(self):
+        return '{id} | {role}'.format(id=self.andrew_id,role=self.role)

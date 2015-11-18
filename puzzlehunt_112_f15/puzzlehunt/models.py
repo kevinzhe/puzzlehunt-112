@@ -35,10 +35,15 @@ class Puzzle(models.Model):
     solution    = models.TextField()
     time_limit  = models.DurationField(help_text = 'in minutes')
     par_score   = models.IntegerField()
-    image       = models.ImageField(upload_to = 'img')
     order       = models.IntegerField()
     def __str__(self):
         return self.title
+
+class PuzzleMedia(models.Model):
+    def upload_path(self, filename):
+        return 'p/{id}/{fn}'.format(id=self.puzzle.order,fn=filename)
+    puzzle      = models.ForeignKey(Puzzle)
+    media_file  = models.FileField(upload_to=upload_path)
 
 class Hint(models.Model):
     puzzle      = models.ForeignKey(Puzzle, related_name="hints")

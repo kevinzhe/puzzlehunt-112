@@ -1,9 +1,13 @@
 from django.contrib import admin
-from .models import Team, TeamMember, Puzzle, Hint, PuzzleProgress, ValidUser
+from .models import Team, TeamMember, Puzzle, Hint, PuzzleProgress, ValidUser, PuzzleMedia
 
 
 class HintInline(admin.StackedInline):
     model = Hint
+    extra = 1
+
+class PuzzleMediaInline(admin.StackedInline):
+    model = PuzzleMedia
     extra = 1
 
 class PuzzleAdmin(admin.ModelAdmin):
@@ -21,13 +25,11 @@ class PuzzleAdmin(admin.ModelAdmin):
                 'solution',
                 'time_limit',
                 'par_score',
-                'image'
             ]})
     ]
-    inlines = [HintInline]
+    inlines = [HintInline, PuzzleMediaInline]
 
 admin.site.register(Puzzle, PuzzleAdmin)
-
 
 class TeamMemberInline(admin.TabularInline):
     model = TeamMember

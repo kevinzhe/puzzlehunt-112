@@ -86,7 +86,7 @@ class PuzzleView(View):
         # check correctness
         try: puzzle = Puzzle.objects.get(order = puzzle_id)
         except Puzzle.DoesNotExist: return HttpResponse(json.dumps({'error': 'Puzzle does not exist'}), content_type='application/json')
-        correct = user_soln == puzzle.solution
+        correct = user_soln.lower() == puzzle.solution.lower()
         response = {
             'correct': correct,
         }

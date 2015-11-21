@@ -1,19 +1,36 @@
 {% extends 'puzzlehunt/puzzlehunt.html' %}
 {% block title %}Home{% endblock %}
 
+{% block css %}
+    {% load staticfiles %}
+    <link rel='stylesheet' type='text/css' href='{% static "puzzlehunt/css/home.css" %}'>
+{% endblock %}
+
 {% block body %}
     <div class='jumbotron'>
-        <div class='container text-center'>
-            <h1>Puzzlehunt 112</h1>
-            <h4>November 21, 2015, 2pm</h4>
-            <hr/>
-            {% if has_team %}
-              <a href="/teampage/{{team_id}}"><button type='button' class='btn btn-primary btn-lg'>Your Team Page&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
-            {% elif user.is_authenticated %}
-              <a href="/jointeam"><button type='button' class='btn btn-primary btn-lg'>Join a Team&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
-            {% else %}
-              <a href="/register"><button type='button' class='btn btn-primary btn-lg'>Register&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
-            {% endif %}
+        <div class='container-fluid text-center'>
+            <div class='img-container'>
+                <img class='img' src='/media/ph-home.png'>
+            </div>
+            <div class='btn-container'>
+                <h4><small>November 21, 2015, 2pm</small></h4>
+                <h4><small>Scaife Hall 125</small></h4>
+                <div>
+                {% if has_team %}
+                  <a href="/teampage/{{team_id}}"><button type='button' class='btn btn-primary btn-lg'>Your Team Page&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
+                {% elif user.is_authenticated %}
+                  <a href="/jointeam"><button type='button' class='btn btn-primary btn-lg'>Join a Team&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
+                {% else %}
+                  <a href="/register"><button type='button' class='btn btn-primary btn-lg'>Register&nbsp;&nbsp;<i class='fa fa-caret-right'></i></button></a>
+                {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
+
+{% block js %}
+    <script src='{% static "puzzlehunt/js/home.js" %}'></script>
+{% endblock %}
+
+

@@ -40,3 +40,16 @@
 #puzzles a:hover {
     text-decoration: none;
 }
+
+.puzzle-button {
+    padding: 0 0;
+    width: 100%;
+    text-align: left;
+    box-shadow: none;
+    background: none;
+    border: none;
+}
+
+.puzzle-button:active {
+    border: none;
+}

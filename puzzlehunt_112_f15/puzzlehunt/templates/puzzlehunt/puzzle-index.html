@@ -20,8 +20,10 @@
     <div class='container' id='puzzles'>
 {% for puzzle in puzzles %}
         <div class='col-sm-8 col-sm-offset-2'>
-        {% if puzzle.score or puzzle.score == None %}
-            <a href='{% url "puzzle" puzzle.order %}'>
+        {% if modal_show_puzzle == puzzle.order and has_modal %}
+            <button class="puzzle-button" typw="button" data-toggle="modal" data-target="#modal{{puzzle.order}}">
+        {% else %}
+            <a href='/p/{{puzzle.order}}'>
         {% endif %}
                 <div class='row puzzle {% if puzzle.score != None %}puzzle-complete{% endif %}'>
                     <div class='col-sm-8'>
@@ -44,10 +46,35 @@
                         </p>
                     </div>
                 </div>
-        {% if puzzle.score %}
+        {% if modal_show_puzzle == puzzle.order and has_modal %}
+            </button>
+        {% else %}
             </a>
         {% endif %}
         </div>
+        {% if puzzle.order == modal_show_puzzle and has_modal %}
+            <!-- Modal -->
+            <div class="modal fade" id="modal{{puzzle.order}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Enter the code to begin</h4>
+                  </div>
+                  <form method="POST">
+                  {% csrf_token %}
+                  <div class="modal-body">
+                    <input name="passcode" class="form-control" placeholder="enter code..."  type="text">
+                    <input type="hidden" name="order" value="{{puzzle.order}}">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Start Puzzle!</button>
+                  </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+        {% endif %}
 {% endfor %}
     </div>
 {% endblock %}

@@ -19,7 +19,7 @@ class StartPuzzleHuntView(View):
         code = request.POST.get("code")
         if (code == "taco tuesdays"):
             team = request.user.member.team
-            team.curr_puzzle = 1
+            team.curr_puzzle = 0
             team.save()
             return HttpResponseRedirect("/p/")
         else:
@@ -94,8 +94,6 @@ class PuzzleView(View):
         if correct and progress.end_time is None:
             progress.end_time = now()
             progress.save()
-            team.curr_puzzle += 1
-            team.save()
             response['completed_in'] = str(progress.completed_in).split('.',2)[0]
             response['solution'] = puzzle.solution
             response['score'] = progress.score
@@ -283,26 +281,51 @@ class TeamPageView(View):
             context['percent_complete'] = 0
         return render(request, 'puzzlehunt/teampage.html', context)
 
-@login_required
-def puzzle_index(request):
-    team = request.user.member.team
-    if team is None:
-        return HttpResponseRedirect("/jointeam")
-    if (team.curr_puzzle == 0):
-        context = {}
-        context["teamID"] = team.id
-        return render(request, 'puzzlehunt/startpuzzlehunt.html', context)
+class PuzzleIndex(View):
+    @method_decorator(login_required)
+    def get(self,request):
+        team = request.user.member.team
+        if team is None:
+            return HttpResponseRedirect("/jointeam")
+        if (team.curr_puzzle == -1):
+            context = {}
+            context["teamID"] = team.id
+            return render(request, 'puzzlehunt/startpuzzlehunt.html', context)
+    
+        puzzles = Puzzle.objects.all().order_by('order')
+        progress = PuzzleProgress.objects.filter(team=team)
+        for puzzle in puzzles:
+            try: puzzle.score = progress.get(puzzle=puzzle).score
+            except PuzzleProgress.DoesNotExist: pass
+        try:
+            cur_puz = Puzzle.objects.get(order=team.curr_puzzle)
+            has_modal = PuzzleProgress.objects.get(team=team,puzzle=cur_puz).score is not None
+        except:
+            has_modal = team.curr_puzzle == 0
+        context = {
+            'puzzles': puzzles,
+            'team': team,
+            'modal_show_puzzle': team.curr_puzzle+1,
+            'has_modal': has_modal
+        }
+        return render(request, 'puzzlehunt/puzzle-index.html', context)
 
-    puzzles = Puzzle.objects.all().order_by('order')
-    progress = PuzzleProgress.objects.filter(team=team)
-    for puzzle in puzzles:
-        try: puzzle.score = progress.get(puzzle=puzzle).score
-        except PuzzleProgress.DoesNotExist: pass
-    context = {
-        'puzzles': puzzles,
-        'team': team
-    }
-    return render(request, 'puzzlehunt/puzzle-index.html', context)
+    @method_decorator(login_required)
+    def post(self, request):
+        passcode = request.POST.get('passcode', None)
+        order = request.POST.get('order', None)
+        team = request.user.member.team
+        if passcode is None:
+            return HttpResponseRedirect('/p')
+        if order is None:
+            return HttpResponseRedirect('/p')
+        try: puzzle = Puzzle.objects.get(order=order)
+        except: return HttpResponseRedirect('/p')
+        if team.curr_puzzle == puzzle.order-1 and puzzle.passcode.lower() == passcode.lower():
+            team.curr_puzzle += 1
+            team.save()
+        return HttpResponseRedirect('/p/'+order)
+
 
 class ScoreboardView(View):
     @method_decorator(login_required)

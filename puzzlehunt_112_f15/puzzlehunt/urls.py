@@ -7,7 +7,7 @@ urlpatterns = [
         views.home,
         name='puzzlehunt-home'),
     url(r'^p/$',
-        views.puzzle_index,
+        views.PuzzleIndex.as_view(),
         name='puzzle-index'),
     url(r'^p/start/',
         views.StartPuzzleHuntView.as_view()),

@@ -31,6 +31,7 @@ class Puzzle(models.Model):
     title       = models.CharField(max_length = 50)
     subtitle    = models.CharField(max_length = 100)
     authors     = models.CharField(max_length = 200)
+    passcode    = models.CharField(max_length = 100)
     flavortext  = models.TextField()
     solution    = models.TextField()
     time_limit  = models.DurationField(help_text = 'hh:mm:ss')

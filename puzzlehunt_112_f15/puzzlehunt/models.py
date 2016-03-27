@@ -85,3 +85,8 @@ class ValidUser(models.Model):
     role        = models.CharField(max_length = 50, choices = ROLE__CHOICES, default = ROLE_STUDENT)
     def __str__(self):
         return '{id} | {role}'.format(id=self.andrew_id,role=self.role)
+
+class Guesses(models.Model):
+    puzzle      = models.ForeignKey(Puzzle)
+    team        = models.ForeignKey(Team)
+    guess       = models.TextField()

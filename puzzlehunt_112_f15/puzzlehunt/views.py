@@ -69,6 +69,7 @@ class PuzzleView(View):
 
     @method_decorator(login_required)
     def post(self, request, puzzle_id):
+        return HttpResponseForbidden(json.dumps({'correct': False}))
         # get and validate the team
         team = request.user.member.team
         if team is None:
@@ -90,6 +91,8 @@ class PuzzleView(View):
         response = {
             'correct': correct,
         }
+        guess = Guesses(puzzle=puzzle,team=team,guess=user_soln.lower())
+        guess.save()
         progress = PuzzleProgress.objects.get(team=team, puzzle=puzzle)
         if correct and progress.end_time is None:
             progress.end_time = now()
@@ -252,6 +255,7 @@ class MakeTeamView(View):
         if passcode == '':
             passcode = None
         team = Team(name=team_name, passcode=passcode)
+        team.curr_puzzle = -1
         team.save()
         member.team = team
         member.save()
@@ -336,7 +340,7 @@ class ScoreboardView(View):
             if team.puzzles_completed > 0:
                 teams.append({
                     'score': team.score,
-                    'puzzles_completed': team.puzzles_completed,
+                    'puzzles_completed': team.curr_puzzle,
                     'name': team.name
                 })
         teams.sort(key=lambda t: t['score'], reverse=True)

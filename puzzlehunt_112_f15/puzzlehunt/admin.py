@@ -18,6 +18,7 @@ class PuzzleAdmin(admin.ModelAdmin):
                 'title',
                 'subtitle',
                 'authors',
+                'passcode',
             ]}),
         ('Puzzle',
             {'fields': [
